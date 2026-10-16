@@ -16,10 +16,12 @@ Two-phase process: checklist first, delete only after explicit user confirmation
 ## Step 1: Run the Archive Script (Checklist Phase)
 
 ```bash
-bash "$(dirname "$0")/../../scripts/workroom-archive.sh" \
+python3 "${CLAUDE_PLUGIN_ROOT}/scripts/workroom.py" archive \
   [--base-dir DIR] \
   [--workroom NAME]
 ```
+
+If `python3` is not found (Windows), run the same command with `python` or `py`.
 
 If the user's cwd is inside a workroom, `--workroom` can be omitted.
 
@@ -52,7 +54,7 @@ Wait for an explicit "yes" before proceeding.
 ## Step 4: Run the Archive Script (Delete Phase)
 
 ```bash
-bash "$(dirname "$0")/../../scripts/workroom-archive.sh" \
+python3 "${CLAUDE_PLUGIN_ROOT}/scripts/workroom.py" archive \
   [--base-dir DIR] \
   --workroom NAME \
   --outcome "Brief one-line summary of what was accomplished" \

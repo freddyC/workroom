@@ -16,10 +16,12 @@ description: >
 Run without `--commit` or `--stash` first to see what state the repos are in:
 
 ```bash
-bash "$(dirname "$0")/../../scripts/workroom-close.sh" \
+python3 "${CLAUDE_PLUGIN_ROOT}/scripts/workroom.py" close \
   [--base-dir DIR] \
   [--workroom NAME]
 ```
+
+If `python3` is not found (Windows), run the same command with `python` or `py`.
 
 If the user's cwd is inside a workroom, `--workroom` can be omitted.
 
@@ -37,11 +39,11 @@ Then re-run with the chosen flag and a summary of the stopping point:
 
 ```bash
 # Commit:
-bash "$(dirname "$0")/../../scripts/workroom-close.sh" \
+python3 "${CLAUDE_PLUGIN_ROOT}/scripts/workroom.py" close \
   --workroom NAME --commit --summary "WIP: token refresh logic, tests failing"
 
 # Stash:
-bash "$(dirname "$0")/../../scripts/workroom-close.sh" \
+python3 "${CLAUDE_PLUGIN_ROOT}/scripts/workroom.py" close \
   --workroom NAME --stash --summary "Pausing mid-implementation"
 
 # Leave as-is: no second run needed, just note it

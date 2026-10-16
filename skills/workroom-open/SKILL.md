@@ -15,10 +15,12 @@ description: >
 ## Step 1: Run the Open Script
 
 ```bash
-bash "$(dirname "$0")/../../scripts/workroom-open.sh" \
+python3 "${CLAUDE_PLUGIN_ROOT}/scripts/workroom.py" open \
   [--base-dir DIR] \
   <search term>
 ```
+
+If `python3` is not found (Windows), run the same command with `python` or `py`.
 
 The search term can be a workroom name, ticket ID, or any keyword.
 

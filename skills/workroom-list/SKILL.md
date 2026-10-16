@@ -13,10 +13,12 @@ description: >
 ## Step 1: Run the List Script
 
 ```bash
-bash "$(dirname "$0")/../../scripts/workroom-list.sh" \
+python3 "${CLAUDE_PLUGIN_ROOT}/scripts/workroom.py" list \
   [--base-dir DIR] \
   [--show-archived]     # only if user asked to see archived workrooms
 ```
+
+If `python3` is not found (Windows), run the same command with `python` or `py`.
 
 ## Step 2: Present the Results
 

@@ -26,15 +26,21 @@ If the description is missing, ask before proceeding.
 ## Step 2: Run the Create Script
 
 ```bash
-bash "$(dirname "$0")/../../scripts/workroom-create.sh" \
+python3 "${CLAUDE_PLUGIN_ROOT}/scripts/workroom.py" create \
   [--base-dir DIR] \
   [--ticket TICKET_ID] \
   [--repo URL] \         # repeat for each repo
   <description words...>
 ```
 
+If `python3` is not found (Windows), run the same command with `python` or `py`.
+
 Read the JSON output. It contains `workroom_dir`, `workroom_name`, `slug`,
-`created_at`, and `repos` (each with `path`, `branch`, `status`).
+`created_at`, `worklog`, `claude_md`, `entry_template` and `repos` (each with
+`path`, `branch`, `status`).
+
+The script has already written `WORKLOG.md` and `CLAUDE.md` from the templates
+(run the `workroom-check` skill to see or change them). Don't rewrite them.
 
 If any repo has `"status": "clone_failed"`, tell the user and ask how to proceed.
 
@@ -44,53 +50,11 @@ If any repo has `"status": "clone_failed"`, tell the user and ask how to proceed
 - **Jira**: `mcp__atlassian-mcp__jira_get_issue` if available
 - **Other URL**: record as-is, skip fetching
 
-## Step 4: Write WORKLOG.md
+If you fetched details, replace the body of the `## Issue` section in
+`WORKLOG.md` (it holds just the ticket ID) with the ID, URL, title and a short
+summary. Leave the other sections as the script wrote them.
 
-Write to `<workroom_dir>/WORKLOG.md`:
-
-```markdown
-# Workroom Log
-
-Created: <created_at>
-Directory: <workroom_name>
-
-## Task
-
-<user's description>
-
-## Repositories
-
-<repo URLs, one per line — or "None">
-
-## Issue
-
-<ticket ID, URL, title, summary — or "None">
-
-## Work Log
-
-### <created_at> — Workroom created
-**Branch:** <branch from script output, or "N/A">
-**Status:** Ready to start
-
----
-```
-
-## Step 5: Write CLAUDE.md
-
-Write to `<workroom_dir>/CLAUDE.md`:
-
-```markdown
-# Workroom: <workroom_name>
-
-All work in this session must stay within this directory (<workroom_dir>).
-
-- Save all files, temp files, scripts, and artifacts inside this workroom
-- Do not write outside this workroom unless the user explicitly confirms
-- Reading files outside is fine for reference
-- Cloned repos live at this directory's root level
-```
-
-## Step 6: Confirm
+## Step 4: Confirm
 
 ```
 Workroom created: <workroom_dir>
@@ -111,12 +75,8 @@ Adapt the flow to task scope — quick fixes skip planning; research skips testi
 If new information invalidates the plan, surface it immediately and offer to replan.
 Document any pivot in WORKLOG.md under a new `## Design` revision entry.
 
-Append to WORKLOG.md as work progresses:
-```markdown
-### YYYY-MM-DD HH:MM — <Task>
-**What:** <changes>
-**Files:** <affected files>
-**Status:** Complete / In Progress / Blocked
-
----
-```
+Append to WORKLOG.md as work progresses, one entry per step, in the format of
+the template at `entry_template` from the script output: fill `{{timestamp}}`
+(YYYY-MM-DD HH:MM), `{{task}}`, `{{changes}}`, `{{files}}` and `{{status}}`
+(Complete / In Progress / Blocked). Keep each entry's `### <date>` heading and
+`**Status:**` line; `workroom-open` and `workroom-list` read them.
