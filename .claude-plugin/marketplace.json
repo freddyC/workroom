@@ -1,0 +1,13 @@
+{
+  "name": "workroom",
+  "owner": {
+    "name": "Fred Christensen"
+  },
+  "plugins": [
+    {
+      "name": "workroom",
+      "source": "./"
+    }
+  ],
+  "description": "Isolated workroom folders for focused Claude Code tasks"
+}
