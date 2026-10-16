@@ -1,13 +1,14 @@
 ---
 name: workroom-open
 description: >
-  Resume or join an existing workroom, restoring full context from its work log.
-  Use when: (1) the user invokes /workroom-open; (2) asks to "open", "resume",
-  "join", "pick up", "continue", or "get back to" a workroom — e.g., "resume the
-  auth fix workroom", "open workroom-ABC-123-fix-auth", "pick up where I left off
-  on the memory leak"; (3) mentions a workroom name or ticket ID in a context that
-  implies they want to continue that work. Do NOT use for creating new workrooms,
-  listing, closing, or archiving.
+  Enter an existing workroom and restore its context from the work log. "Room"
+  means workroom. Use when: (1) the user invokes /workroom-open; (2) asks to
+  "open", "enter", "join", "go into", "switch to", "resume", "pick up",
+  "continue", or "get back to" a workroom or room — e.g., "enter the auth room",
+  "join workroom-ABC-123-fix-auth", "resume the auth fix workroom", "pick up where
+  I left off on the memory leak"; (3) mentions a workroom name or ticket ID in a
+  context that implies they want to continue that work. Do NOT use for creating
+  new workrooms, listing, closing, leaving, or archiving.
 ---
 
 # Workroom: Open

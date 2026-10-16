@@ -100,11 +100,25 @@ def workroom_dirs(base_dir):
     )
 
 
+def current_workroom():
+    """The workroom holding the current folder (it or any parent), or None."""
+    cwd = Path.cwd().resolve()
+    for path in (cwd, *cwd.parents):
+        if path.name.startswith("workroom-") and path.name != ARCHIVE_DIR_NAME:
+            return path
+    return None
+
+
+def default_base_dir():
+    current = current_workroom()
+    return str(current.parent if current else Path.cwd())
+
+
 def resolve_workroom(base_dir, name):
     if not name:
-        cwd = Path.cwd().resolve()
-        if cwd.parent == base_dir.resolve() and cwd.name.startswith("workroom-"):
-            name = cwd.name
+        current = current_workroom()
+        if current and current.parent == base_dir.resolve():
+            name = current.name
         else:
             raise WorkroomError("No workroom specified and cwd is not inside a workroom. Pass --workroom NAME.")
     workroom_dir = base_dir / name
@@ -352,7 +366,14 @@ def cmd_list(args):
             if match:
                 archived.append({"name": "archived", "kind": "archived", "task": match.group(2), "status": "Archived", "last_updated": match.group(1), "path": None})
 
-    emit({"base_dir": str(base_dir), "count": len(active), "archive_count": len(archived), "workrooms": active + archived})
+    current = current_workroom()
+    emit({
+        "base_dir": str(base_dir),
+        "current": next((room for room in active if current and Path(room["path"]).resolve() == current), None),
+        "count": len(active),
+        "archive_count": len(archived),
+        "workrooms": active + archived,
+    })
 
 
 def cmd_archive(args):
@@ -507,7 +528,7 @@ def parser():
 
     def command(name, handler):
         sub = commands.add_parser(name)
-        sub.add_argument("--base-dir", default=os.getcwd())
+        sub.add_argument("--base-dir", default=default_base_dir())
         sub.set_defaults(handler=handler)
         return sub
 

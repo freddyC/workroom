@@ -1,12 +1,13 @@
 ---
 name: workroom-close
 description: >
-  Pause work on a workroom and safely record stopping state, without archiving or
-  deleting it. Use when: (1) the user invokes /workroom-close; (2) says "close this
-  workroom", "I'm done for now", "pause this workroom", "save my progress and stop",
-  "wrap up for today", or any phrasing indicating they want to stop current work
-  while keeping the workroom available to resume later. Do NOT use when the user
-  wants to permanently archive or delete a workroom — use workroom-archive for that.
+  Leave a workroom for now: record stopping state in its work log, without
+  archiving or deleting it. "Room" means workroom. Use when: (1) the user invokes
+  /workroom-close; (2) says "close", "leave", "exit", "step out of", or "pause"
+  this workroom or room, "I'm done for now", "save my progress and stop", "wrap up
+  for today", or any phrasing indicating they want to stop current work while
+  keeping the workroom available to come back to. Do NOT use when the user wants
+  to permanently archive or delete a workroom — use workroom-archive for that.
 ---
 
 # Workroom: Close

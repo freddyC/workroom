@@ -18,13 +18,13 @@ Claude Code skills for isolated working folders. A workroom is a `workroom-<name
 | Skill | Say something like | What it does |
 | --- | --- | --- |
 | `workroom-create` | "start a workroom for ABC-123" | Makes `workroom-<name>` in the current folder, clones the repos you name, writes `WORKLOG.md` and `CLAUDE.md` |
-| `workroom-open` | "resume the ABC-123 workroom" | Reads the work log and restores where you stopped |
-| `workroom-close` | "pause this workroom" | Records stopping state in the work log, optionally commits or stashes WIP |
-| `workroom-list` | "what workrooms do I have?" | Lists workrooms in the current folder and their status |
+| `workroom-open` | "enter / join / open the ABC-123 room" | Reads the work log and restores where you stopped |
+| `workroom-close` | "leave / exit / close this room" | Records stopping state in the work log, optionally commits or stashes WIP |
+| `workroom-list` | "what workrooms do I have?", "what room am I in?" | Lists workrooms and their status, and which one you're in |
 | `workroom-archive` | "the PR merged, archive it" | Saves the work log to `workroom-archive/`, adds a line to `ACCOMPLISHMENTS.md`, removes the folder |
 | `workroom-check` | "check my workrooms", "add a Decisions section to the work log" | Compares workrooms' files with the templates, adds missing sections, helps you change the templates |
 
-Each skill also runs as a slash command, e.g. `/workroom-create`. `scripts/workroom.py` does the file work (`create`, `open`, `close`, `list`, `archive`, `check`) and defaults to the current folder; pass `--base-dir` to use another.
+Each skill also runs as a slash command, e.g. `/workroom-create`. `scripts/workroom.py` does the file work (`create`, `open`, `close`, `list`, `archive`, `check`) and defaults to the folder that holds your workrooms, even when run from inside one; pass `--base-dir` to use another. "Room" and "workroom" mean the same thing to every skill.
 
 ## Customizing the files
 
