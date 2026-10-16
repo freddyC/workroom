@@ -20,3 +20,7 @@ Claude Code skills for isolated working folders. A workroom is a `workroom-<name
 | `workroom-archive` | "the PR merged, archive it" | Saves the work log to the archive and removes the folder |
 
 Each skill also runs as a slash command, e.g. `/workroom-create`. The scripts in `scripts/` do the file work and default to the current folder; pass `--base-dir` to use another.
+
+## License
+
+MIT. See [LICENSE](LICENSE).
