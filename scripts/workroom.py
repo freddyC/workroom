@@ -87,8 +87,8 @@ def last_status(log_text):
 
 
 def last_entry_date(log_text):
-    dates = [line[4:] for line in log_text.splitlines() if re.match(r"^### \d{4}-\d{2}-\d{2}", line)]
-    return " ".join(dates[-1].split()[:2]) if dates else ""
+    dates = [match.group(1) for match in re.finditer(r"^### (\d{4}-\d{2}-\d{2}(?: \d{2}:\d{2})?)", log_text, re.MULTILINE)]
+    return dates[-1] if dates else ""
 
 
 def workroom_dirs(base_dir):
@@ -366,14 +366,47 @@ def cmd_list(args):
             if match:
                 archived.append({"name": "archived", "kind": "archived", "task": match.group(2), "status": "Archived", "last_updated": match.group(1), "path": None})
 
-    current = current_workroom()
+    current_dir = current_workroom()
+    current = next((room for room in active if current_dir and Path(room["path"]).resolve() == current_dir), None)
+    if args.text:
+        return print(list_text(base_dir, active, archived, current, args.current))
     emit({
         "base_dir": str(base_dir),
-        "current": next((room for room in active if current and Path(room["path"]).resolve() == current), None),
+        "current": current,
         "count": len(active),
         "archive_count": len(archived),
         "workrooms": active + archived,
     })
+
+
+def clip(text, width):
+    return text if len(text) <= width else text[: width - 1] + "…"
+
+
+def list_text(base_dir, active, archived, current, only_current):
+    def describe(room):
+        task = clip(room["task"] or "(no log found)", 50)
+        updated = f" · {room['last_updated']}" if room.get("last_updated") else ""
+        return f"{room['name']} — {task} [{clip(room['status'], 40)}]{updated}"
+
+    if only_current:
+        if current:
+            return f"You're in {describe(current)}"
+        return f"You're not in a workroom. {len(active)} workroom(s) in {base_dir}; say \"list workrooms\" to see them."
+
+    if not active and not archived:
+        return f"No workrooms found in {base_dir}.\nUse /workroom-create to start one."
+    width = max((len(room["name"]) for room in active), default=0)
+    lines = [f"Active workrooms ({len(active)}) in {base_dir}:", ""]
+    for room in active:
+        here = "  ← you're here" if room is current else ""
+        task = clip(room["task"] or "(no log found)", 50)
+        updated = f"  {room['last_updated']}" if room.get("last_updated") else ""
+        lines.append(f"  {room['name'].ljust(width)}  {task}  [{clip(room['status'], 40)}]{updated}{here}")
+    if archived:
+        lines += ["", f"Archived ({len(archived)}):", ""]
+        lines += [f"  {room['last_updated']}  {room['task']}" for room in archived]
+    return "\n".join(lines)
 
 
 def cmd_archive(args):
@@ -545,7 +578,10 @@ def parser():
     close.add_argument("--stash", action="store_true")
     close.add_argument("--summary", default="")
 
-    command("list", cmd_list).add_argument("--show-archived", action="store_true")
+    listing = command("list", cmd_list)
+    listing.add_argument("--show-archived", action="store_true")
+    listing.add_argument("--text", action="store_true", help="print a ready-to-show summary instead of JSON")
+    listing.add_argument("--current", action="store_true", help="with --text, only say which workroom the cwd is in")
 
     archive = command("archive", cmd_archive)
     archive.add_argument("--workroom", default="")

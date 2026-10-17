@@ -8,6 +8,10 @@ description: >
   for today", or any phrasing indicating they want to stop current work while
   keeping the workroom available to come back to. Do NOT use when the user wants
   to permanently archive or delete a workroom — use workroom-archive for that.
+allowed-tools:
+  - Bash(python3 "${CLAUDE_PLUGIN_ROOT}/scripts/workroom.py" *)
+  - Bash(python "${CLAUDE_PLUGIN_ROOT}/scripts/workroom.py" *)
+  - Bash(py "${CLAUDE_PLUGIN_ROOT}/scripts/workroom.py" *)
 ---
 
 # Workroom: Close

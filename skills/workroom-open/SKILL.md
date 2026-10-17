@@ -9,6 +9,10 @@ description: >
   I left off on the memory leak"; (3) mentions a workroom name or ticket ID in a
   context that implies they want to continue that work. Do NOT use for creating
   new workrooms, listing, closing, leaving, or archiving.
+allowed-tools:
+  - Bash(python3 "${CLAUDE_PLUGIN_ROOT}/scripts/workroom.py" *)
+  - Bash(python "${CLAUDE_PLUGIN_ROOT}/scripts/workroom.py" *)
+  - Bash(py "${CLAUDE_PLUGIN_ROOT}/scripts/workroom.py" *)
 ---
 
 # Workroom: Open

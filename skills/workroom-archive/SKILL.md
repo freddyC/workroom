@@ -7,6 +7,10 @@ description: >
   "the PR is merged, archive it", "delete the workroom", or any phrasing indicating
   the work is complete and the local directory should be removed. Do NOT use when
   the user just wants to pause — use workroom-close for that.
+allowed-tools:
+  - Bash(python3 "${CLAUDE_PLUGIN_ROOT}/scripts/workroom.py" *)
+  - Bash(python "${CLAUDE_PLUGIN_ROOT}/scripts/workroom.py" *)
+  - Bash(py "${CLAUDE_PLUGIN_ROOT}/scripts/workroom.py" *)
 ---
 
 # Workroom: Archive

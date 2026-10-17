@@ -9,6 +9,10 @@ description: >
   search-service", "spin up a workspace for the ABC-123 ticket"; (4) provides a
   repo URL and a task description together. Do NOT use for listing, opening, closing,
   or archiving existing workrooms.
+allowed-tools:
+  - Bash(python3 "${CLAUDE_PLUGIN_ROOT}/scripts/workroom.py" *)
+  - Bash(python "${CLAUDE_PLUGIN_ROOT}/scripts/workroom.py" *)
+  - Bash(py "${CLAUDE_PLUGIN_ROOT}/scripts/workroom.py" *)
 ---
 
 # Workroom: Create

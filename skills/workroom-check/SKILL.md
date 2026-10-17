@@ -8,6 +8,10 @@ description: >
   workrooms", or "add a section to every work log"; (3) a workroom script reports
   a missing section. Do NOT use for creating, opening, closing, listing, or
   archiving workrooms.
+allowed-tools:
+  - Bash(python3 "${CLAUDE_PLUGIN_ROOT}/scripts/workroom.py" *)
+  - Bash(python "${CLAUDE_PLUGIN_ROOT}/scripts/workroom.py" *)
+  - Bash(py "${CLAUDE_PLUGIN_ROOT}/scripts/workroom.py" *)
 ---
 
 # Workroom: Check

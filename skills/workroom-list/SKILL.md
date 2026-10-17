@@ -7,61 +7,29 @@ description: >
   on?"; (3) asks which room they are in — "what room am I in?", "which workroom
   is this?", "where am I?", "am I in a workroom?". Do NOT use for creating,
   opening, closing, or archiving workrooms.
+allowed-tools:
+  - Bash(python3 "${CLAUDE_PLUGIN_ROOT}/scripts/workroom.py" *)
+  - Bash(python "${CLAUDE_PLUGIN_ROOT}/scripts/workroom.py" *)
+  - Bash(py "${CLAUDE_PLUGIN_ROOT}/scripts/workroom.py" *)
 ---
 
 # Workroom: List
 
-## Step 1: Run the List Script
+Run the script and show its output exactly as printed, in a code block. Don't
+rebuild or reword it; the script already formats it.
 
-```bash
-python3 "${CLAUDE_PLUGIN_ROOT}/scripts/workroom.py" list \
-  [--base-dir DIR] \
-  [--show-archived]     # only if user asked to see archived workrooms
-```
+- **Which room am I in** ("what room am I in?", "where am I?"):
+  ```bash
+  python3 "${CLAUDE_PLUGIN_ROOT}/scripts/workroom.py" list --text --current
+  ```
+- **List workrooms** (add `--show-archived` only if the user asked for archived ones):
+  ```bash
+  python3 "${CLAUDE_PLUGIN_ROOT}/scripts/workroom.py" list --text [--base-dir DIR] [--show-archived]
+  ```
 
 If `python3` is not found (Windows), run the same command with `python` or `py`.
 
-## Step 2: Present the Results
-
-`current` is the workroom holding the current folder (it or any parent), or
-`null` outside one. `base_dir` is the folder that holds the workrooms, even when
-the command runs from inside one.
-
-If the user asked which room they are in, answer with `current` alone:
-
-```
-You're in workroom-ABC-123-fix-auth — Fix auth bug in api-gateway [In Progress]
-Last update: 2026-10-14 16:20
-```
-
-or, when `current` is `null`: `You're not in a workroom.` followed by the
-active workrooms in `<base_dir>`, if any, so they can enter one.
-
-Otherwise format the list as a clean summary, marking `current` with `(you're here)`:
-
-```
-Active workrooms (3):
-
-  workroom-ABC-123-fix-auth     — Fix auth bug in api-gateway          [In Progress]
-  workroom-memory-leak           — Investigate search-service memory     [Ready to start]
-  workroom-add-dark-mode         — Add dark mode to dashboard            [Blocked]
-
-<base_dir from JSON>
-```
-
-Sort order: the script returns workrooms sorted by name; present as-is.
-
-If `count` is 0:
-```
-No workrooms found in <base_dir from JSON>.
-Use /workroom-create to start one.
-```
-
-If the user asks for details on a specific workroom, read that workroom's full
-`WORKLOG.md` and summarize it inline — don't run a separate script for this.
-
-## Notes
-
-- Show archived workrooms only if `--show-archived` was passed (user explicitly asked)
-- If `"task": null`, show `(no log found)` in place of the task description
-- Use `last_updated` from the JSON to show relative age if helpful ("3 days ago")
+The commands find the folder that holds the workrooms on their own, even from
+inside one. For details on one workroom, read its `WORKLOG.md` and summarize it.
+Without `--text` the script prints JSON (`base_dir`, `current`, `count`,
+`workrooms`) for when you need the fields themselves.
