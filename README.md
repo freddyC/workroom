@@ -24,6 +24,15 @@ Claude Code skills for isolated working folders. A workroom is a `workroom-<name
 | `workroom-archive` | "the PR merged, archive it" | Saves the work log to `workroom-archive/`, adds a line to `ACCOMPLISHMENTS.md`, removes the folder |
 | `workroom-check` | "check my workrooms", "add a Decisions section to the work log" | Compares workrooms' files with the templates, adds missing sections, helps you change the templates |
 
+## Instant commands
+
+| Command | Shows |
+| --- | --- |
+| `/rooms` | Your workrooms and their status |
+| `/room` | The workroom you're in, or that you're not in one |
+
+These run the script and print its output straight away, without the model, so they answer in about a second; the matching skills take a few model round trips. Claude still sees the output, so you can follow up with "enter the second one".
+
 Each skill also runs as a slash command, e.g. `/workroom-create`. `scripts/workroom.py` does the file work (`create`, `open`, `close`, `list`, `archive`, `check`) and defaults to the folder that holds your workrooms, even when run from inside one; pass `--base-dir` to use another. "Room" and "workroom" mean the same thing to every skill.
 
 ## Customizing the files
