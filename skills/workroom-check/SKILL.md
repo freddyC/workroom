@@ -31,7 +31,8 @@ python3 "${CLAUDE_PLUGIN_ROOT}/scripts/workroom.py" check \
   [--workroom NAME]
 ```
 
-If `python3` is not found (Windows), run the same command with `python` or `py`.
+On Windows, run the same command with `python` (or `py`): `python3` there is
+usually the Microsoft Store stub, which fails.
 
 The JSON has `templates` (each with `source`: `default` or `override`, and its
 `path`), `template_problems`, and `workrooms`, each with its `files` and their

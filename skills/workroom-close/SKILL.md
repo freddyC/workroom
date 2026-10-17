@@ -18,15 +18,19 @@ allowed-tools:
 
 ## Step 1: Run the Close Script (Check Phase)
 
-Run without `--commit` or `--stash` first to see what state the repos are in:
+Run without `--commit`, `--stash` or `--leave` first to see what state the repos
+are in. Pass `--summary` now: if nothing needs a decision, this run writes the
+log entry.
 
 ```bash
 python3 "${CLAUDE_PLUGIN_ROOT}/scripts/workroom.py" close \
   [--base-dir DIR] \
-  [--workroom NAME]
+  [--workroom NAME] \
+  --summary "Where things stand and what's next"
 ```
 
-If `python3` is not found (Windows), run the same command with `python` or `py`.
+On Windows, run the same command with `python` (or `py`): `python3` there is
+usually the Microsoft Store stub, which fails.
 
 If the user's cwd is inside a workroom, `--workroom` can be omitted.
 
@@ -51,7 +55,9 @@ python3 "${CLAUDE_PLUGIN_ROOT}/scripts/workroom.py" close \
 python3 "${CLAUDE_PLUGIN_ROOT}/scripts/workroom.py" close \
   --workroom NAME --stash --summary "Pausing mid-implementation"
 
-# Leave as-is: no second run needed, just note it
+# Leave as-is (still logs the stop):
+python3 "${CLAUDE_PLUGIN_ROOT}/scripts/workroom.py" close \
+  --workroom NAME --leave --summary "Mid-refactor, changes left uncommitted"
 ```
 
 If `"needs_decision": false`, the script already appended the log entry — skip
