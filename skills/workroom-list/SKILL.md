@@ -27,7 +27,8 @@ rebuild or reword it; the script already formats it.
   python3 "${CLAUDE_PLUGIN_ROOT}/scripts/workroom.py" list --text [--base-dir DIR] [--show-archived]
   ```
 
-If `python3` is not found (Windows), run the same command with `python` or `py`.
+On Windows, run the same command with `python` (or `py`): `python3` there is
+usually the Microsoft Store stub, which fails.
 
 The commands find the folder that holds the workrooms on their own, even from
 inside one. For details on one workroom, read its `WORKLOG.md` and summarize it.

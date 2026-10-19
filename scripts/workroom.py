@@ -143,6 +143,23 @@ def count_lines(text):
     return len([line for line in text.splitlines() if line.strip()])
 
 
+def local_only_commits(repo_dir):
+    """Commits on any local branch that no remote has. Unlike `@{u}..` this also
+    counts branches with no upstream, which `@{u}..` silently reports as zero."""
+    return count_lines(git(repo_dir, "log", "--branches", "--not", "--remotes", "--oneline")[1])
+
+
+def loose_files(workroom_dir):
+    """Top-level entries that aren't repos or the workroom's own files: notes, scripts
+    and artifacts the workroom's CLAUDE.md asks Claude to keep here. Archive deletes them."""
+    repos = set(repos_in(workroom_dir))
+    return sorted(
+        path.name + ("/" if path.is_dir() else "")
+        for path in workroom_dir.iterdir()
+        if path not in repos and path.name not in ("WORKLOG.md", "CLAUDE.md")
+    )
+
+
 def slugify(text, words=4):
     parts = [part for part in re.split(r"[^a-z0-9]+", text.lower()) if part]
     return "-".join(parts[:words])
@@ -242,7 +259,10 @@ def cmd_open(args):
 
     needle = search.lower()
     candidates = workroom_dirs(base_dir)
-    matches = [path for path in candidates if needle in path.name.lower()]
+    # An exact name wins, so workroom-x stays reachable once create has made workroom-x-2.
+    matches = [path for path in candidates if path.name.lower() in (needle, f"workroom-{needle}")]
+    if not matches:
+        matches = [path for path in candidates if needle in path.name.lower()]
     if not matches:
         matches = [
             path for path in candidates
@@ -297,7 +317,7 @@ def cmd_close(args):
 
     for repo_dir in repos_in(workroom_dir):
         dirty = git(repo_dir, "status", "--short")[1]
-        unpushed = count_lines(git(repo_dir, "log", "@{u}..", "--oneline")[1])
+        unpushed = local_only_commits(repo_dir)
         stashes = count_lines(git(repo_dir, "stash", "list")[1])
         code, branch = git(repo_dir, "rev-parse", "--abbrev-ref", "HEAD")
         has_changes = bool(dirty)
@@ -310,6 +330,8 @@ def cmd_close(args):
             git(repo_dir, "stash", "push", "-m", f"workroom-close: {timestamp}")
             action, dirty = "stashed", ""
             stashes = count_lines(git(repo_dir, "stash", "list")[1])
+        elif has_changes and args.leave:
+            action = "left"
         statuses.append({
             "repo": repo_dir.name,
             "branch": branch if code == 0 else "unknown",
@@ -428,12 +450,15 @@ def cmd_archive(args):
     for repo_dir in repos_in(workroom_dir):
         code, branch = git(repo_dir, "rev-parse", "--abbrev-ref", "HEAD")
         dirty = git(repo_dir, "status", "--short")[1]
-        unpushed = count_lines(git(repo_dir, "log", "@{u}..", "--oneline")[1])
+        unpushed = local_only_commits(repo_dir)
+        stashes = count_lines(git(repo_dir, "stash", "list")[1])
         warnings = []
         if dirty:
             warnings.append("uncommitted changes")
         if unpushed:
-            warnings.append(f"{unpushed} unpushed commits")
+            warnings.append(f"{unpushed} commits on no remote")
+        if stashes:
+            warnings.append(f"{stashes} stashes")
         all_clean = all_clean and not warnings
         checks.append({
             "repo": repo_dir.name,
@@ -442,6 +467,8 @@ def cmd_archive(args):
             "clean": not warnings,
             "warnings": warnings,
         })
+    loose = loose_files(workroom_dir)
+    all_clean = all_clean and not loose
 
     if not args.confirm_delete:
         return emit({
@@ -453,6 +480,7 @@ def cmd_archive(args):
             "all_clean": all_clean,
             "archive_log_name": archive_log_name,
             "repos": checks,
+            "loose_files": loose,
         })
 
     archive_dir.mkdir(parents=True, exist_ok=True)
@@ -576,6 +604,7 @@ def parser():
     close.add_argument("--workroom", default="")
     close.add_argument("--commit", action="store_true")
     close.add_argument("--stash", action="store_true")
+    close.add_argument("--leave", action="store_true", help="keep uncommitted changes as they are and log the stop anyway")
     close.add_argument("--summary", default="")
 
     listing = command("list", cmd_list)

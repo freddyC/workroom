@@ -52,6 +52,13 @@ To change one, ask Claude to "customize the workroom templates", or run `python3
 
 Keep the `## Task`, `## Issue`, `## Repositories` and `## Work Log` headings, and each entry's `### YYYY-MM-DD HH:MM — …` heading and `**Status:**` line: open, list and archive read them. `workroom-check` warns when a template drops one, and with `--fix` adds a template's new sections to existing workrooms.
 
+## Tests
+
+```
+python3 -m unittest discover -s tests   # the script, against throwaway git repos
+claude plugin test .                     # the /rooms and /room commands
+```
+
 ## License
 
 MIT. See [LICENSE](LICENSE).

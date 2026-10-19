@@ -37,7 +37,8 @@ python3 "${CLAUDE_PLUGIN_ROOT}/scripts/workroom.py" create \
   <description words...>
 ```
 
-If `python3` is not found (Windows), run the same command with `python` or `py`.
+On Windows, run the same command with `python` (or `py`): `python3` there is
+usually the Microsoft Store stub, which fails.
 
 Read the JSON output. It contains `workroom_dir`, `workroom_name`, `slug`,
 `created_at`, `worklog`, `claude_md`, `entry_template` and `repos` (each with

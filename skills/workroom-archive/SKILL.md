@@ -25,22 +25,28 @@ python3 "${CLAUDE_PLUGIN_ROOT}/scripts/workroom.py" archive \
   [--workroom NAME]
 ```
 
-If `python3` is not found (Windows), run the same command with `python` or `py`.
+On Windows, run the same command with `python` (or `py`): `python3` there is
+usually the Microsoft Store stub, which fails.
 
 If the user's cwd is inside a workroom, `--workroom` can be omitted.
 
 ## Step 2: Present the Checklist
 
-Read the JSON (`"phase": "checklist"`). If `"all_clean": false`, surface any
-warnings before proceeding:
+Read the JSON (`"phase": "checklist"`). If `"all_clean": false`, surface every
+repo warning and every entry in `loose_files` before proceeding. Archiving keeps
+only `WORKLOG.md`: everything else in the folder is deleted.
 
-> "Before archiving, a couple of things to sort out in [repo]:
->   ⚠ 2 uncommitted changes
->   ⚠ 1 unpushed commit
+> "Before archiving, a few things would be lost:
+>   ⚠ api-gateway: uncommitted changes
+>   ⚠ api-gateway: 1 commits on no remote
+>   ⚠ api-gateway: 2 stashes
+>   ⚠ loose files: analysis.md, scripts/
 >
-> Want me to commit and push before archiving?"
+> Want me to commit and push, and move or keep the loose files, before archiving?"
 
-Handle any outstanding items (commit, push) before continuing.
+`commits on no remote` counts commits on any local branch that no remote has,
+including branches with no upstream. Handle each item (commit, push, pop or drop
+stashes, move loose files out) before continuing.
 
 If no PR URL was mentioned yet, ask:
 > "Has a PR been opened for this work? Paste the link and I'll record it, or
