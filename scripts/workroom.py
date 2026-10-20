@@ -25,6 +25,8 @@ USER_TEMPLATES_DIR = Path(os.environ.get("WORKROOM_TEMPLATES") or Path.home() / 
 TEMPLATE_NAMES = ["WORKLOG.md", "CLAUDE.md", "worklog-entry.md", "worklog-paused.md", "ACCOMPLISHMENTS.md", "accomplishment.md"]
 WORKLOG_REQUIRED_HEADINGS = ["## Task", "## Issue", "## Repositories", "## Work Log"]
 ARCHIVE_DIR_NAME = "workroom-archive"
+# Files Finder and Explorer leave in any folder they show. They aren't work, so archive ignores them.
+OS_FILES = {".DS_Store", "Thumbs.db", "desktop.ini"}
 
 
 class WorkroomError(Exception):
@@ -156,7 +158,7 @@ def loose_files(workroom_dir):
     return sorted(
         path.name + ("/" if path.is_dir() else "")
         for path in workroom_dir.iterdir()
-        if path not in repos and path.name not in ("WORKLOG.md", "CLAUDE.md")
+        if path not in repos and path.name not in ("WORKLOG.md", "CLAUDE.md") and path.name not in OS_FILES
     )
 
 

@@ -93,6 +93,15 @@ class WorkroomTest(unittest.TestCase):
         self.assertFalse(checklist["all_clean"])
         self.assertEqual(checklist["loose_files"], ["analysis.md", "scripts/"])
 
+    def test_archive_ignores_files_the_os_drops_in_folders(self):
+        room = self.create("os", "junk")
+        self.pushed_repo(room)
+        for name in (".DS_Store", "Thumbs.db", "desktop.ini"):
+            (Path(room["workroom_dir"]) / name).write_text("")
+        checklist = self.checklist(room)
+        self.assertEqual(checklist["loose_files"], [])
+        self.assertTrue(checklist["all_clean"])
+
     def test_close_logs_the_summary_when_nothing_needs_a_decision(self):
         room = self.create("quiet", "close")
         closed = self.run_script("close", "--workroom", room["workroom_name"], "--summary", "Tests green, PR next")
